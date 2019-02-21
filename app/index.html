@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js"></script>
+    <script src="app.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      /* Style the header */
+      header {
+        background-color: #666;
+        padding: 30px;
+        text-align: center;
+        font-size: 35px;
+        color: white;
+      }
+
+      /* Create two columns/boxes that floats next to each other */
+      nav {
+        float: right;
+        width: 30%;
+        height: 546px; /* only for demonstration, should be removed */
+        background: #ccc;
+        padding: 20px;
+      }
+
+      /* Style the footer */
+      footer {
+        background-color: #777;
+        padding: 10px;
+        text-align: center;
+        color: white;
+      }
+
+      /* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
+      @media (max-width: 600px) {
+        nav, article {
+          width: 100%;
+          height: auto;
+        }
+      }
+      input {
+        display: block;
+        margin-bottom: 12px;
+      }
+    </style>
+    <title>Títulos UNIR</title>
+  </head>
+
+  <body>
+    <header>Títulos académicos UNIR</header>
+
+    <nav>
+      <h4>EVENTOS</h4>
+      <div id="eventsList" style="overflow: auto; height: 450px">
+
+      </div>
+    </nav>
+
+
+    <div style="background-color: deepskyblue; padding:20px">
+      <h4>ADDRESSES</h4>
+      <select name="Addresses" id="Addresses">
+        <optgroup label="ALUMNO">
+          <option value="0">ALUMNO 1 - MANAGEMENT KEY (0xe092b1fa25df5786d151246e492eed3d15ea4daa)</option>
+          <option value="3">ALUMNO 1 - ACTION KEY (0xc91579bb7972f76d595f8665bffaf92874c8084c)</option>
+          <option value="5">ALUMNO 2 - MANAGEMENT KEY (0x889735777f51c84272a7feb0d763280179a529a9)</option>
+          <option value="7">ALUMNO 2 - ACTION KEY (0x6a71e87487c0ec01ecffd09a2042cb5ed507393e)</option>
+        </optgroup>
+        <optgroup label="UNIVERSIDAD">
+          <option value="1">UNIVERSIDAD 1 - MANAGEMENT KEY (0xc0d8f541ab8b71f20c10261818f2f401e8194049)</option>
+          <option value="4">UNIVERSIDAD 1 - SIGNER KEY (0x6f03947036cba3279b07cd6ea5ca674ca51e52ba)</option>
+          <option value="6" disabled>UNIVERSIDAD 2 - MANAGEMENT KEY (0x2c46bcb6da3ae85da881edeed4ec2fe92670f90f)</option>
+          <option value="8" disabled>UNIVERSIDAD 2 - SIGNER KEY (0x3e014e5c311a7d6f652ca4f8bb016f4338a44118)</option>
+        </optgroup>
+        <optgroup label="EMPRESA">
+          <option value="2">EMPRESA 1 (0xf1f8ef6b4d4ba31079e2263ec85c03fd5a0802bf)</option>
+          <option value="9"disabled>EMPRESA 2 (0x75c4fb2e81a6d3420125f5145182f528d1699146)</option>
+        </optgroup>
+      </select>
+    </div>
+
+
+    <div style="background-color: deepskyblue; padding:20px; padding-top: 1px">
+      <h4>IDENTITIES</h4>
+      <select name="listIdentities" id="listIdentities">
+        <optgroup label="ALUMNOS">
+          <option value="0">Alumno 1</option>
+          <option value="1" id="disAlumno" disabled>Alumno 2</option>
+          <option value="6">Añadir alumno</option>
+        </optgroup>
+        <optgroup label="UNIVERSIDAD">
+          <option value="2">Universidad 1</option>
+          <option value="3" disabled>Universidad 2</option>
+        </optgroup>
+        <optgroup label="EMPRESA">
+          <option value="4">Empresa 1</option>
+          <option value="5" id="disEmpresa" disabled>Empresa 2</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div id="actionAlumno" style="display: none; background-color: skyblue; padding:20px; width: 1345px; height: 300px">
+      <div style="float: left; width: 250px">
+        <h5>Aprobar alegación</h5>
+        Claim Id: <br>
+        <input type="text" name="claimId" id="claimId" placeholder="Eg. 0" value="">
+        <br>
+        <button onclick="approveClaim();">Approve</button>
+        <br>
+      </div>
+
+      <div style="float: right; width: 600px; padding-top: 1px">
+        <h5>Get Claims</h5>
+        Get ClaimID by ClaimType:
+        <input type="text" name="getClaimType" id="getClaimType" placeholder="Eg. 1" value="">
+        <button onclick="getClaimIdsByType();">Get Claim ID</button>
+        <br>
+        <br>
+        Get Claim by ClaimID:
+        <input type="text" name="getClaimId" id="getClaimId" placeholder="Eg. 0x8dskf3..." value="">
+        <button onclick="getClaim();">Get Claim</button>
+      </div>
+    </div>
+
+    <div id="actionUniversidad" style="display: none; background-color: skyblue; padding:20px; width: 1345px; height: 300px">
+      <div style="float: left; width: 250px">
+        <h5>Añadir alegación</h5>
+        Claim Type: <br>
+        <input type="text" name="claimType" id="claimType" placeholder="Eg. 1" value="">
+        Scheme: <br>
+        <input type="text" name="scheme" id="scheme" placeholder="Eg. 1" value="">
+        Data: <br>
+        <input type="text" name="data" id="data" placeholder="Eg. Calification 8.5" value="">
+      </div>
+
+      <div style="float: right; width: 600px; padding-top: 60px">
+        URI: <br>
+        <input type="text" name="uri" id="uri" placeholder="Eg. www.unir.net" value="">
+        Alumno: <br>
+        <select id="claimedIdentity" name="claimedIdentity">
+          <option value="0">Alumno 1</option>
+          <option value="1" id="disClaimed" disabled>Alumno 2</option>
+        </select>
+        <br>
+        <br>
+        <button onclick="addClaim();">Add Claim</button>
+        <br>
+      </div>
+    </div>
+
+    <div id="actionVerifier" style="display: none; background-color: skyblue; padding:20px; width: 1345px; height: 300px">
+      <div style="float: left; width: 250px">
+        <h5>Checkear alegación</h5>
+        Alumno: <br>
+        <select id="checkedIdentity" name="checkedIdentity">
+          <option value="0">Alumno 1</option>
+          <option value="1" id="disVerified" disabled>Alumno 2</option>
+        </select>
+        <br>
+        <br>
+        Claim Type: <br>
+        <input type="text" name="claimTypeChecked" id="claimTypeChecked" placeholder="Eg. 1" value="">
+        <button onclick="checkClaim();">Check Claim</button>
+      </div>
+      <div style="float: right; width: 600px; padding-top: 60px">
+        <h5>¿Quién confía en UNIR?</h5>
+        <br>
+        <button onclick="getTrusted();">Get verifiers</button>
+      </div>
+    </div>
+
+    <div id="actionAddAlumno" style="display: none; background-color: skyblue; padding:20px; width: 1345px; height: 300px">
+      <h5>Añadir alumno</h5>
+      Nombre de alumno: <br>
+      <select id="addAlumnoId" name="addAlumnoId">
+        <option value="0">Alumno 2</option>
+        <option value="1" disabled>No more addresses...</option>
+      </select>
+      <br>
+      <br>
+      <button onclick="addAlumno();">Add alumno</button>
+    </div>
+
+    <footer>
+      <p>www.unir.net</p>
+    </footer>
+
+  </body>
+</html>
